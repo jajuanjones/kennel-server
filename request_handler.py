@@ -21,6 +21,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         Args:
             status (number): the status code to return to the front end
         """
+        # these are functions being imported by the parent class BaseHTTPRequestHandler
+        # send_response sends the status number of the http reqeust
         self.send_response(status)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -30,8 +32,10 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         """Sets the options headers
         """
+        # this sends an http response status of 'ok'
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
+        # GET, POST, PUT, DELETE are our http verbs to do 'something' to data
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
         self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
         self.end_headers()
@@ -48,6 +52,9 @@ class HandleRequests(BaseHTTPRequestHandler):
         print(self.path)
 
         # It's an if..else statement
+        """if the http path ends with '/animals' then we get a function
+        response from our imported views package
+        """
         if self.path == "/animals":
             response = get_all_animals()
         else:
