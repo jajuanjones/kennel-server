@@ -1,10 +1,10 @@
 EMPLOYEES = [
     {
-        "id": "1",
+        "id": 1,
         "name": "Johnny Silver"
     },
     {
-        "id": "2",
+        "id": 2,
         "name": "Sara Rile"
     }
 ]

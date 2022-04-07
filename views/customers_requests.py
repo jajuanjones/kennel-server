@@ -1,10 +1,10 @@
 CUSTOMERS = [
     {
-        "id": "1",
+        "id": 1,
         "name": "Joe Welsh"
     },
     {
-        "id": "2",
+        "id": 2,
         "name": "Sandra Bullock"
     }
 ]

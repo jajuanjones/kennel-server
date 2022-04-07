@@ -19,6 +19,8 @@ class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
     """
     def parse_url(self, path):
+        """This function parses our string url path to create a param of the indeces
+        """
         # Just like splitting a string in JavaScript. If the
         # path is "/animals/1", the resulting list will
         # have "" at index 0, "animals" at index 1, and "1"
@@ -87,19 +89,19 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = f"{get_all_animals()}"
         elif resource == "locations":
             if id is not None:
-                response = f"{get_single_location}"
+                response = f"{get_single_location(id)}"
             else:
-                response = f"{get_all_locations}"
+                response = f"{get_all_locations()}"
         elif resource == "customers":
             if id is not None:
-                response = f"{get_single_customer}"
+                response = f"{get_single_customer(id)}"
             else:
-                response = f"{get_all_customers}"
+                response = f"{get_all_customers()}"
         elif resource == "employees":
             if id is not None:
-                response = f"{get_single_employee}"
+                response = f"{get_single_employee(id)}"
             else:
-                response = f"{get_all_employees}"
+                response = f"{get_all_employees()}"
 
         self.wfile.write(response.encode())
 
