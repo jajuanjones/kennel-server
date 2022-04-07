@@ -26,4 +26,18 @@ def get_single_location(id):
             requested_location = location
 
     return requested_location
-      
+
+def create_location(location):
+    """This function creates a new location dictionary to be used in post request
+    """
+    # get the max id from the last index of LOCATIONS list
+    max_id = LOCATIONS[-1]["id"]
+    # create a new id that is 1 greater than the current max
+    new_id = max_id + 1
+    # set our new id to a new location
+    location["id"] = new_id
+    # add our new location to end of LOCATIONS array
+    LOCATIONS.append(location)
+    # return our location object
+    return location
+    
