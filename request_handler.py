@@ -9,6 +9,7 @@ from views import get_all_employees
 from views import get_single_employee
 from views import get_all_locations
 from views import get_single_location
+from views import create_location
 
 
 # Here's a class. It inherits from another class.
@@ -124,15 +125,21 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Initialize new animal
         new_animal = None
+        new_location = None
+        new_customer = None
+        new_employee = None
 
         # Add a new animal to the list. Don't worry about
         # the orange squiggle, you'll define the create_animal
         # function next.
         if resource == "animals":
             new_animal = create_animal(post_body)
+            self.wfile.write(f"{new_animal}".encode())
+        elif resource == "locations":
+            new_location = create_location(post_body)
+            self.wfile.write(f"{new_location}".encode())
 
         # Encode the new animal and send in response
-        self.wfile.write(f"{new_animal}".encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
