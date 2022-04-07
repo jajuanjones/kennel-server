@@ -25,3 +25,17 @@ def get_single_employee(id):
             request_employee = employee
 
     return request_employee
+
+def create_employee(employee):
+    """this function will create a new employee object and add it to our employee list
+    """
+    # get our max id from the end of employee list
+    max_id = EMPLOYEES[-1]["id"]
+    # create a new id based off the max id
+    new_id = max_id - 1
+    # set our employee param id to the new id
+    employee["id"] = new_id
+    # append our param to the end of employee list
+    EMPLOYEES.append(employee)
+    # return param
+    return employee

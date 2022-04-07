@@ -8,6 +8,7 @@ from views import get_single_customer
 from views import create_customer
 from views import get_all_employees
 from views import get_single_employee
+from views import create_employee
 from views import get_all_locations
 from views import get_single_location
 from views import create_location
@@ -145,6 +146,10 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Encode the new customer and send in response
             new_customer = create_customer(post_body)
             self.wfile.write(f"{new_customer}".encode())
+        elif resource == "employees":
+        # Encode the new customer and send in response
+            new_employee = create_employee(post_body)
+            self.wfile.write(f"{new_employee}".encode())
 
 
     # Here's a method on the class that overrides the parent's method.
