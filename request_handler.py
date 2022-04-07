@@ -5,6 +5,7 @@ from views import get_single_animal
 from views import create_animal
 from views import get_all_customers
 from views import get_single_customer
+from views import create_customer
 from views import get_all_employees
 from views import get_single_employee
 from views import get_all_locations
@@ -133,13 +134,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         # the orange squiggle, you'll define the create_animal
         # function next.
         if resource == "animals":
+        # Encode the new animal and send in response
             new_animal = create_animal(post_body)
             self.wfile.write(f"{new_animal}".encode())
         elif resource == "locations":
+        # Encode the new location and send in response
             new_location = create_location(post_body)
             self.wfile.write(f"{new_location}".encode())
+        elif resource == "customers":
+        # Encode the new customer and send in response
+            new_customer = create_customer(post_body)
+            self.wfile.write(f"{new_customer}".encode())
 
-        # Encode the new animal and send in response
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
