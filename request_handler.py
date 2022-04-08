@@ -13,6 +13,7 @@ from views import create_employee
 from views import get_all_locations
 from views import get_single_location
 from views import create_location
+from views import delete_location
 
 
 # Here's a class. It inherits from another class.
