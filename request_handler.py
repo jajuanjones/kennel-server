@@ -123,7 +123,13 @@ class HandleRequests(BaseHTTPRequestHandler):
         """This function is our post methodology
         """
         self._set_headers(201)
+        # creating a variable of a number of bytes
+        # headers are the meta data to the body of text we're sending
+        # the second argument 0 keeps get function from sending an error
+        # in case request header has no content
         content_len = int(self.headers.get('content-length', 0))
+        # we need to know the byte length cause it tells rfile when to turn itself off and stop reading
+        # this tells rfile how long to read
         post_body = self.rfile.read(content_len)
 
         # Convert JSON string to a Python dictionary
@@ -171,6 +177,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         post_body = json.loads(post_body)
 
         # Parse the URL
+        # we know the request will have a path
         (resource, id) = self.parse_url(self.path)
 
         # Delete a single animal from the list
