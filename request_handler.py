@@ -164,7 +164,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_employee = create_employee(post_body)
             self.wfile.write(f"{new_employee}".encode())
 
-
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
 
@@ -201,7 +200,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             # Encode the new employee and send in response
             self.wfile.write("".encode())
 
-
     # heres a method on that handles DELETE requests
     def do_DELETE(self):
         """Handles DELETE requests to the server
@@ -224,7 +222,6 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Encode the new animal and send in response
         self.wfile.write("".encode())
-
 
 # This function is not inside the class. It is the starting
 # point of this application.

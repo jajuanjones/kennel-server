@@ -54,3 +54,16 @@ def delete_employee(id):
     # if index of employeeindex exists (is greater than 0), remove from list
     if employee_index >= 0:
         EMPLOYEES.pop(employee_index)
+        
+def update_employee(id, new_employee):
+    """This function will replace the data of a dictionary at an index
+    """
+    # iterate over array using enumerate to get index of each dictionary
+    # then for each employee
+    for i, employee in enumerate(EMPLOYEES):
+        # if location id matches id specified
+        if employee["id"] == id:
+            # we will change the data to new data at that index
+            EMPLOYEES[i] = new_employee
+            # stop the function
+            break
