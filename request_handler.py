@@ -3,6 +3,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_animals
 from views import get_single_animal
 from views import create_animal
+from views import delete_animal
 from views import get_all_customers
 from views import get_single_customer
 from views import create_customer
@@ -159,6 +160,21 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server
         """
         self.do_POST()
+
+    # heres a method on that handles DELETE requests
+    def do_DELETE(self):
+    # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            delete_animal(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
 
 # This function is not inside the class. It is the starting
