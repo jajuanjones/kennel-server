@@ -163,7 +163,9 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     # heres a method on that handles DELETE requests
     def do_DELETE(self):
-    # Set a 204 response code
+        """Handles DELETE requests to the server
+        """
+        # Set a 204 response code
         self._set_headers(204)
 
         # Parse the URL
