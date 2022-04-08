@@ -52,3 +52,16 @@ def delete_customer(id):
     # if location has an index remove location at index from list
     if customer_index >= 0:
         CUSTOMERS.pop(customer_index)
+
+def update_customer(id, new_customer):
+    """This function will replace the dictionary with the id user specifies
+    """
+    # iterate over customers list with enumerate to get index of each value
+    # for every customer in list
+    for i, customer in enumerate(CUSTOMERS):
+        # if customer id matches specified id param
+        if customer["id"] == id:
+            # update the values of that found customer with with new data
+            CUSTOMERS[i] = new_customer
+            # end this function
+            break

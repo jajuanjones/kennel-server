@@ -4,18 +4,22 @@ from views import get_all_animals
 from views import get_single_animal
 from views import create_animal
 from views import delete_animal
+from views import update_animal
 from views import get_all_customers
 from views import get_single_customer
 from views import create_customer
+from views import delete_customer
+from views import update_customer
 from views import get_all_employees
 from views import get_single_employee
 from views import create_employee
 from views import delete_employee
-from views import delete_customer
+from views import update_employee
 from views import get_all_locations
 from views import get_single_location
 from views import create_location
 from views import delete_location
+from views import update_location
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -119,7 +123,13 @@ class HandleRequests(BaseHTTPRequestHandler):
         """This function is our post methodology
         """
         self._set_headers(201)
+        # creating a variable of a number of bytes
+        # headers are the meta data to the body of text we're sending
+        # the second argument 0 keeps get function from sending an error
+        # in case request header has no content
         content_len = int(self.headers.get('content-length', 0))
+        # we need to know the byte length cause it tells rfile when to turn itself off and stop reading
+        # this tells rfile how long to read
         post_body = self.rfile.read(content_len)
 
         # Convert JSON string to a Python dictionary
@@ -154,14 +164,41 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_employee = create_employee(post_body)
             self.wfile.write(f"{new_employee}".encode())
 
-
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
 
     def do_PUT(self):
         """Handles PUT requests to the server
         """
-        self.do_POST()
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        # we know the request will have a path
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            update_animal(id, post_body)
+            # Encode the new animal and send in response
+            self.wfile.write("".encode())
+        # Delete a single location from the list
+        elif resource == "locations":
+            update_location(id, post_body)
+            # Encode the new location and send in response
+            self.wfile.write("".encode())
+        # Delete a single customer from the list
+        elif resource == "customers":
+            update_customer(id, post_body)
+            # Encode the new customer and send in response
+            self.wfile.write("".encode())
+        # Delete a single employee from the list
+        elif resource == "employees":
+            update_employee(id, post_body)
+            # Encode the new employee and send in response
+            self.wfile.write("".encode())
 
     # heres a method on that handles DELETE requests
     def do_DELETE(self):
@@ -185,7 +222,6 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Encode the new animal and send in response
         self.wfile.write("".encode())
-
 
 # This function is not inside the class. It is the starting
 # point of this application.

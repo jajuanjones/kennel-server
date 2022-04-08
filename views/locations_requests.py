@@ -54,3 +54,15 @@ def delete_location(id):
     # if location is found, remove from list with pop
     if location_index >= 0:
         LOCATIONS.pop(location_index)
+
+def update_location(id, new_location):
+    """This function will replace the data of location with specified id
+    """
+    # iterate over location list using enumerate to get the index of each value
+    for i, location in enumerate(LOCATIONS):
+        # then if a value has the id that matches the user specified id
+        if location["id"] == id:
+            # replace the values of the location at that index with new data
+            LOCATIONS[i] = new_location
+            # then stop the function
+            break
