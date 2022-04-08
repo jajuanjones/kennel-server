@@ -38,3 +38,17 @@ def create_customer(customer):
     CUSTOMERS.append(customer)
     # return our customer param
     return customer
+
+def delete_customer(id):
+    """This function will remove a customer dictionary from list
+    """
+    # in case no index, inital index is -1
+    customer_index = -1
+    # iterate list and get the index for each value
+    for i, customer in enumerate(CUSTOMERS):
+        # if customer is found save the index of customer
+        if customer["id"] == id:
+            customer_index = i
+    # if location has an index remove location at index from list
+    if customer_index >= 0:
+        CUSTOMERS.pop(customer_index)

@@ -10,10 +10,12 @@ from views import create_customer
 from views import get_all_employees
 from views import get_single_employee
 from views import create_employee
+from views import delete_customer
 from views import get_all_locations
 from views import get_single_location
 from views import create_location
 from views import delete_location
+from views.customers_requests import delete_customer
 
 
 # Here's a class. It inherits from another class.
