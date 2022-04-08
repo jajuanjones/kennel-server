@@ -174,6 +174,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Delete a single animal from the list
         if resource == "animals":
             delete_animal(id)
+        elif resource == "locations":
+            delete_location(id)
+        elif resource == "customers":
+            delete_customer(id)
+        elif resource == "employees":
+            delete_employee(id)
 
         # Encode the new animal and send in response
         self.wfile.write("".encode())
