@@ -3,16 +3,19 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_animals
 from views import get_single_animal
 from views import create_animal
+from views import delete_animal
 from views import get_all_customers
 from views import get_single_customer
 from views import create_customer
 from views import get_all_employees
 from views import get_single_employee
 from views import create_employee
+from views import delete_employee
+from views import delete_customer
 from views import get_all_locations
 from views import get_single_location
 from views import create_location
-
+from views import delete_location
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -159,6 +162,29 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server
         """
         self.do_POST()
+
+    # heres a method on that handles DELETE requests
+    def do_DELETE(self):
+        """Handles DELETE requests to the server
+        """
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            delete_animal(id)
+        elif resource == "locations":
+            delete_location(id)
+        elif resource == "customers":
+            delete_customer(id)
+        elif resource == "employees":
+            delete_employee(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
 
 # This function is not inside the class. It is the starting

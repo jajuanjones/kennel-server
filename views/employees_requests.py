@@ -39,3 +39,18 @@ def create_employee(employee):
     EMPLOYEES.append(employee)
     # return param
     return employee
+
+def delete_employee(id):
+    """This function will remove an employee from EMPLOYEES list
+    """
+    # in case of no index found, inital index value of -1 is given
+    # this prevents the last index of the list from being removed
+    employee_index = -1
+    # iterate employees list with enumurate to get the index of each value
+    for i, employee in enumerate(EMPLOYEES):
+        # if employee id is found, save the value of its index
+        if employee["id"] == id:
+            employee_index = i
+    # if index of employeeindex exists (is greater than 0), remove from list
+    if employee_index >= 0:
+        EMPLOYEES.pop(employee_index)

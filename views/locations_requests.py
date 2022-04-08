@@ -40,4 +40,17 @@ def create_location(location):
     LOCATIONS.append(location)
     # return our location object
     return location
-    
+
+def delete_location(id):
+    """This function will remove a location dictionary from list
+    """
+    # first give the initial index value of -1, in case an index isn't found
+    location_index = -1
+    # iterate of locations with enumerate to get the index of each value
+    for i, location in enumerate(LOCATIONS):
+        # if location is found store its index
+        if location["id"] == id:
+            location_index = i
+    # if location is found, remove from list with pop
+    if location_index >= 0:
+        LOCATIONS.pop(location_index)
