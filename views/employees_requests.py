@@ -1,30 +1,63 @@
-EMPLOYEES = [
-    {
-        "id": 1,
-        "name": "Johnny Silver"
-    },
-    {
-        "id": 2,
-        "name": "Sara Rile"
-    }
-]
+import sqlite3
+import json
+from models import Employee
 
 def get_all_employees():
     """This function will return all employees from list
     """
-    return EMPLOYEES
+    # create a connection with database
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        # use row and create a database cursor
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        # make our SQL query to grab all employees
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.name,
+            e.address,
+            e.location_id
+        FROM employee e
+        """)
+        # create an empty list to hold all employees from database
+        employees = []
+        # convert rows into python list
+        dataset = db_cursor.fetchall()
+        # iterate over list of employees too get data for each row
+        for row in dataset:
+        # add list item to employees list
+            employee = Employee(row['id'], row['name'],
+                                row['address'], row['location_id'])
+
+            employees.append(employee.__dict__)
+    # serialize list to json
+    return json.dumps(employees)
 
 def get_single_employee(id):
     """This function will return a single employee from list
     """
-    request_employee = None
-
-    # for loop to iterate over employees list to grab employee
-    for employee in EMPLOYEES:
-        if employee["id"] == id:
-            request_employee = employee
-
-    return request_employee
+    # create a conection with database
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        # use Row and create a cursor for database
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        # create our SQL query to grab data based on client specification
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.name,
+            e.address,
+            e.location_id
+        FROM employee e
+        WHERE e.id = ?
+        """, (id,))
+        # convert grabbed row into python list
+        data = db_cursor.fetchone()
+        # create an instance of the grabbed row
+        employee = Employee(data['id'], data['name'],
+                            data['address'], data['location_id'])
+        # serialize instance into json
+        return json.dumps(employee.__dict__)
 
 def create_employee(employee):
     """this function will create a new employee object and add it to our employee list
