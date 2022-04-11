@@ -2,16 +2,20 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_animals
 from views import get_single_animal
+from views import get_animal_by_location_id
+from views import get_animal_by_status
 from views import create_animal
 from views import delete_animal
 from views import update_animal
 from views import get_all_customers
 from views import get_single_customer
+from views import get_customers_by_email
 from views import create_customer
 from views import delete_customer
 from views import update_customer
 from views import get_all_employees
 from views import get_single_employee
+from views import get_employee_by_location
 from views import create_employee
 from views import delete_employee
 from views import update_employee
@@ -39,19 +43,31 @@ class HandleRequests(BaseHTTPRequestHandler):
         # at index 2.
         path_params = path.split("/")
         resource = path_params[1]
-        id = None
 
-        # Try to get the item at index 2
-        try:
-            # Convert the string "1" to the integer 1
-            # This is the new parseInt()
-            id = int(path_params[2])
-        except IndexError:
-            pass  # No route parameter exists: /animals
-        except ValueError:
-            pass  # Request had trailing slash: /animals/
+        # Check if there is a query string parameter
+        if "?" in resource:
+            # GIVEN: /customers?email=jenna@solis.com
 
-        return (resource, id)  # This is a tuple
+            param = resource.split("?")[1]  # email=jenna@solis.com
+            resource = resource.split("?")[0]  # 'customers'
+            pair = param.split("=")  # [ 'email', 'jenna@solis.com' ]
+            key = pair[0]  # 'email'
+            value = pair[1]  # 'jenna@solis.com'
+
+            return ( resource, key, value )
+
+        # No query string parameter
+        else:
+            id = None
+
+            try:
+                id = int(path_params[2])
+            except IndexError:
+                pass  # No route parameter exists: /animals
+            except ValueError:
+                pass  # Request had trailing slash: /animals/
+
+            return (resource, id)
 
     # Here's a class function
     def _set_headers(self, status):
@@ -88,34 +104,58 @@ class HandleRequests(BaseHTTPRequestHandler):
         from our parsed path
         """
         self._set_headers(200)
-        response = {}  # Default response
 
-        # Parse the URL and capture the tuple that is returned
-        (resource, id) = self.parse_url(self.path)
+        response = {}
 
-        if resource == "animals":
-            if id is not None:
-                response = f"{get_single_animal(id)}"
+        # Parse URL and store entire tuple in a variable
+        parsed = self.parse_url(self.path)
 
-            else:
-                response = f"{get_all_animals()}"
-        elif resource == "locations":
-            if id is not None:
-                response = f"{get_single_location(id)}"
-            else:
-                response = f"{get_all_locations()}"
-        elif resource == "customers":
-            if id is not None:
-                response = f"{get_single_customer(id)}"
-            else:
-                response = f"{get_all_customers()}"
-        elif resource == "employees":
-            if id is not None:
-                response = f"{get_single_employee(id)}"
-            else:
-                response = f"{get_all_employees()}"
+        # Response from parse_url() is a tuple with 2
+        # items in it, which means the request was for
+        # `/animals` or `/animals/2`
+        if len(parsed) == 2:
+            ( resource, id ) = parsed
 
-        self.wfile.write(response.encode())
+            if resource == "animals":
+                if id is not None:
+                    response = f"{get_single_animal(id)}"
+                else:
+                    response = f"{get_all_animals()}"
+            elif resource == "customers":
+                if id is not None:
+                    response = f"{get_single_customer(id)}"
+                else:
+                    response = f"{get_all_customers()}"
+            elif resource == "employees":
+                if id is not None:
+                    response = f"{get_single_employee(id)}"
+                else:
+                    response = f"{get_all_employees()}"
+            elif resource == "locations":
+                if id is not None:
+                    response = f"{get_single_location(id)}"
+                else:
+                    response = f"{get_all_locations()}"
+
+        # Response from parse_url() is a tuple with 3
+        # items in it, which means the request was for
+        # `/resource?parameter=value`
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
+
+            # Is the resource `customers` and was there a
+            # query parameter that specified the customer
+            # email as a filtering value?
+            if key == "email" and resource == "customers":
+                response = get_customers_by_email(value)
+            elif key == "location_id" and resource == "animals":
+                response = get_animal_by_location_id(value)
+            elif key == "status" and resource == "animals":
+                response = get_animal_by_status(value)
+            elif key == "location_id" and resource == "employees":
+                response = get_employee_by_location(value)
+
+        self.wfile.write(f"{response}".encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
