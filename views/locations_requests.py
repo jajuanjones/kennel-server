@@ -1,31 +1,60 @@
-LOCATIONS = [
-        {
-            "id": 1,
-            "name": "Nashville North",
-            "address": "8422 Johnson Pike"
-        },
-        {
-            "id": 2,
-            "name": "Nashville South",
-            "address": "209 Emory Drive"
-        }
-]
-
+import sqlite3
+import json
+from models import Location
 def get_all_locations():
     """This function returns locations in locations list
     """
-    return LOCATIONS
+    # create a connection with the database
+    with sqlite3.connect('./kennel.sqlite3') as cnn:
+        # create a cursor for our rows
+        cnn.row_factory = sqlite3.Row
+        db_factory = cnn.cursor()
+        # create an sql query that gets all of our rows
+        db_factory.execute("""
+        SELECT
+            l.id,
+            l.name,
+            l.address
+        FROM location l
+        """)
+        # create an empty list of locations
+        locations = []
+        # convert our SQL rows into python lists
+        dataset = db_factory.fetchall()
+        # iterate list of data
+        for row in dataset:
+            # and for every location create a new instance of a location
+            location = Location(row['id'], row['name'], row['address'])
+            # add new data to our location list
+            # Q: What is dict doing?
+            # A:
+            locations.append(location.__dict__)
+    # serialize data into JSON
+    return json.dumps(locations)
 
 def get_single_location(id):
     """This function will return single location from locations list
     """
-    requested_location = None
-    # create a for loop to iterate over locations list and grab locations
-    for location in LOCATIONS:
-        if location["id"] == id:
-            requested_location = location
-
-    return requested_location
+    # create a connection with our database
+    with sqlite3.connect('./kennel.sqlite3') as cnn:
+        # create a database cursor for our rows
+        cnn.row_factory = sqlite3.Row
+        db_factory = cnn.cursor()
+        # make an sql query that fetches data on client spec
+        db_factory.execute("""
+        SELECT
+            l.id,
+            l.name,
+            l.address
+        FROM location l
+        WHERE l.id = ?
+        """,(id,))
+        # convert our data in python
+        data = db_factory.fetchone()
+        # create an instance of a location based on the recieved data
+        location = Location(data['id'], data['name'], data['address'])
+        # serialize our data into json
+        return json.dumps(location.__dict__)
 
 def create_location(location):
     """This function creates a new location dictionary to be used in post request
