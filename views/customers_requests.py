@@ -70,6 +70,36 @@ def get_single_customer(id):
         # serialize list with json
         return json.dumps(customer.__dict__)
 
+# we will pass in 'email' as the param for this method
+def get_customers_by_email(email):
+    """This function will return customers filtered by their email
+    """
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            c.id,
+            c.name,
+            c.address,
+            c.email,
+            c.password
+        FROM customer c
+        WHERE c.email = ?
+        """, ( email, ))
+
+        customers = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            customer = Customer(row['id'], row['name'], row['address'], 
+                                row['email'] , row['password'])
+            customers.append(customer.__dict__)
+
+    return json.dumps(customers)
+
 def create_customer(customer):
     """This function will create a new customer
     """

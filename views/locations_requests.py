@@ -5,12 +5,17 @@ def get_all_locations():
     """This function returns locations in locations list
     """
     # create a connection with the database
-    with sqlite3.connect('./kennel.sqlite3') as cnn:
+    # with as allows us to only run code inside of block when that connection is active
+    with sqlite3.connect('./kennel.sqlite3') as conn:
         # create a cursor for our rows
-        cnn.row_factory = sqlite3.Row
-        db_factory = cnn.cursor()
+        # Q: What is Row and what is row_factory?
+        # A: Row is a way to process the database info we get back
+        # A: setting this to row_factory allows us to transform our tuple from the data into
+        #   a more useful object
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
         # create an sql query that gets all of our rows
-        db_factory.execute("""
+        db_cursor.execute("""
         SELECT
             l.id,
             l.name,
@@ -20,7 +25,7 @@ def get_all_locations():
         # create an empty list of locations
         locations = []
         # convert our SQL rows into python lists
-        dataset = db_factory.fetchall()
+        dataset = db_cursor.fetchall()
         # iterate list of data
         for row in dataset:
             # and for every location create a new instance of a location

@@ -78,6 +78,70 @@ def get_single_animal(id):
 
         return json.dumps(animal.__dict__)
 
+def get_animal_by_location_id(location_id):
+    """This function will filter for animals that have the location_id we're looking for
+    """
+    # create a database connection
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        # Row in for for row_factory to better translate data
+        conn.row_factory = sqlite3.Row
+        # assign our database cursor to a variable to use to execute query
+        db_cursor = conn.cursor()
+        # create an SQL query
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        FROM animal a
+        WHERE a.location_id = ?
+        """, ( location_id, ))
+        # create an empty list for animals
+        animals = []
+        # transform our data to be more pythonic
+        dataset = db_cursor.fetchall()
+        # iterate over data
+        for row in dataset:
+            # for data that meets requirements create an instance of said data
+            animal = Animal(row['id'], row['name'], row['breed'],
+                            row['status'], row['location_id'],
+                            row['customer_id'])
+            # add this data to our list
+            animals.append(animal.__dict__)
+    # return our data in json serialization
+    return json.dumps(animals)
+
+def get_animal_by_status(status):
+    """This function will filter animals based on their status
+    """
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        FROM animal a
+        WHERE a.status = ?
+        """, ( status, ))
+
+        animals = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            animal = Animal(row['id'], row['name'], row['breed'],
+                            row['status'], row['location_id'],
+                            row['customer_id'])
+            animals.append(animal.__dict__)
+    
+    return json.dumps(animals)
+
 def create_animal(animal):
     """This function adds a new animal object to the end of our animals array
     """
