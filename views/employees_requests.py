@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from models import Employee
+from models import Location
 
 def get_all_employees():
     """This function will return all employees from list
@@ -16,8 +17,12 @@ def get_all_employees():
             e.id,
             e.name,
             e.address,
-            e.location_id
+            e.location_id,
+            l.name location_name,
+            l.address location_address
         FROM employee e
+        JOIN location l
+            ON l.id = e.location_id
         """)
         # create an empty list to hold all employees from database
         employees = []
@@ -29,6 +34,9 @@ def get_all_employees():
             employee = Employee(row['id'], row['name'],
                                 row['address'], row['location_id'])
 
+            location = Location(row['id'], row['location_name'], row['location_address'])
+
+            employee.location = location.__dict__
             employees.append(employee.__dict__)
     # serialize list to json
     return json.dumps(employees)
@@ -101,27 +109,30 @@ def create_employee(employee):
 def delete_employee(id):
     """This function will remove an employee from EMPLOYEES list
     """
-    # in case of no index found, inital index value of -1 is given
-    # this prevents the last index of the list from being removed
-    employee_index = -1
-    # iterate employees list with enumurate to get the index of each value
-    for i, employee in enumerate(EMPLOYEES):
-        # if employee id is found, save the value of its index
-        if employee["id"] == id:
-            employee_index = i
-    # if index of employeeindex exists (is greater than 0), remove from list
-    if employee_index >= 0:
-        EMPLOYEES.pop(employee_index)
-        
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        DELETE FROM employee
+        WHERE id = ?
+        """, ( id, ))
+
 def update_employee(id, new_employee):
     """This function will replace the data of a dictionary at an index
     """
-    # iterate over array using enumerate to get index of each dictionary
-    # then for each employee
-    for i, employee in enumerate(EMPLOYEES):
-        # if location id matches id specified
-        if employee["id"] == id:
-            # we will change the data to new data at that index
-            EMPLOYEES[i] = new_employee
-            # stop the function
-            break
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        UPDATE employee
+            SET
+                name = ?,
+                address = ?,
+                location_id = ?
+        WHERE id = ?
+        """, (new_employee["name"], new_employee["address"],
+              new_employee["location_id"], id, ))
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    return True
