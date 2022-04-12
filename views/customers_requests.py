@@ -117,26 +117,33 @@ def create_customer(customer):
 def delete_customer(id):
     """This function will remove a customer dictionary from list
     """
-    # in case no index, inital index is -1
-    customer_index = -1
-    # iterate list and get the index for each value
-    for i, customer in enumerate(CUSTOMERS):
-        # if customer is found save the index of customer
-        if customer["id"] == id:
-            customer_index = i
-    # if location has an index remove location at index from list
-    if customer_index >= 0:
-        CUSTOMERS.pop(customer_index)
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        DELETE FROM customer
+        WHERE id = ?
+        """, ( id, ))
 
 def update_customer(id, new_customer):
     """This function will replace the dictionary with the id user specifies
     """
-    # iterate over customers list with enumerate to get index of each value
-    # for every customer in list
-    for i, customer in enumerate(CUSTOMERS):
-        # if customer id matches specified id param
-        if customer["id"] == id:
-            # update the values of that found customer with with new data
-            CUSTOMERS[i] = new_customer
-            # end this function
-            break
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        # update our row with new data using update query
+        db_cursor.execute("""
+        UPDATE customer
+            SET
+                name = ?,
+                address = ?,
+                email = ?,
+                password = ?,
+        WHERE id = ?
+        """, (new_customer["name"], new_customer["address"],
+              new_customer["email"], new_customer["password"], id, ))
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    return True
+        

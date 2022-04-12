@@ -210,35 +210,31 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_PUT(self):
         """Handles PUT requests to the server
         """
-        self._set_headers(204)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
 
         # Parse the URL
-        # we know the request will have a path
         (resource, id) = self.parse_url(self.path)
 
-        # Delete a single animal from the list
+        success = False
+
         if resource == "animals":
-            update_animal(id, post_body)
-            # Encode the new animal and send in response
-            self.wfile.write("".encode())
-        # Delete a single location from the list
-        elif resource == "locations":
-            update_location(id, post_body)
-            # Encode the new location and send in response
-            self.wfile.write("".encode())
-        # Delete a single customer from the list
+            success = update_animal(id, post_body)
+        # rest of the elif's
         elif resource == "customers":
-            update_customer(id, post_body)
-            # Encode the new customer and send in response
-            self.wfile.write("".encode())
-        # Delete a single employee from the list
+            success = update_customer(id, post_body)
         elif resource == "employees":
-            update_employee(id, post_body)
-            # Encode the new employee and send in response
-            self.wfile.write("".encode())
+            success = update_employee(id, post_body)
+        elif resource == "locations":
+            success = update_location(id, post_body)
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+
+        self.wfile.write("".encode())
 
     # heres a method on that handles DELETE requests
     def do_DELETE(self):

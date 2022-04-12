@@ -1,5 +1,6 @@
 import sqlite3
 import json
+from sqlite3 import dbapi2
 from models import Location
 def get_all_locations():
     """This function returns locations in locations list
@@ -78,25 +79,28 @@ def create_location(location):
 def delete_location(id):
     """This function will remove a location dictionary from list
     """
-    # first give the initial index value of -1, in case an index isn't found
-    location_index = -1
-    # iterate of locations with enumerate to get the index of each value
-    for i, location in enumerate(LOCATIONS):
-        # if location is found store its index
-        if location["id"] == id:
-            location_index = i
-    # if location is found, remove from list with pop
-    if location_index >= 0:
-        LOCATIONS.pop(location_index)
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        DELETE FROM location
+        WHERE id = ?
+        """, ( id, ))
 
 def update_location(id, new_location):
     """This function will replace the data of location with specified id
     """
-    # iterate over location list using enumerate to get the index of each value
-    for i, location in enumerate(LOCATIONS):
-        # then if a value has the id that matches the user specified id
-        if location["id"] == id:
-            # replace the values of the location at that index with new data
-            LOCATIONS[i] = new_location
-            # then stop the function
-            break
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        UPDATE location
+            SET
+                name = ?,
+                address = ?
+        WHERE id = ?
+        """, (new_location["name"], new_location["address"], id, ))
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    return True
