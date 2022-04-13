@@ -92,19 +92,23 @@ def get_employee_by_location(location_id):
 
     return json.dumps(employees)
 
-def create_employee(employee):
+def create_employee(new_employee):
     """this function will create a new employee object and add it to our employee list
     """
-    # get our max id from the end of employee list
-    max_id = EMPLOYEES[-1]["id"]
-    # create a new id based off the max id
-    new_id = max_id - 1
-    # set our employee param id to the new id
-    employee["id"] = new_id
-    # append our param to the end of employee list
-    EMPLOYEES.append(employee)
-    # return param
-    return employee
+    with sqlite3.connect('./kennel.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        INSERT INTO Employee
+            ( name, address, location_id )
+        VALUES
+            (?, ?, ?);
+        """, (new_employee['name'], new_employee['address'],
+              new_employee['locationId'], ))
+
+        id = db_cursor.lastrowid
+        new_employee['id'] = id
+
+    return json.dumps(new_employee)
 
 def delete_employee(id):
     """This function will remove an employee from EMPLOYEES list
