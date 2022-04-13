@@ -168,7 +168,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         # the second argument 0 keeps get function from sending an error
         # in case request header has no content
         content_len = int(self.headers.get('content-length', 0))
-        # we need to know the byte length cause it tells rfile when to turn itself off and stop reading
+        # we need to know the byte length cause it tells rfile 
+        # when to turn itself off and stop reading
         # this tells rfile how long to read
         post_body = self.rfile.read(content_len)
 
